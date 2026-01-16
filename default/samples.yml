@@ -1,0 +1,16 @@
+JJIJtu:
+  sampleName: cribl_abnormal_ai_audit
+  created: 1767837468029
+  isPackOnly: true
+  size: 3231
+  numEvents: 2
+UZfr1E:
+  sampleName: cribl_abnormal_ai_threat
+  created: 1767837715839
+  size: 5254
+  numEvents: 2
+hnke15:
+  sampleName: cribl_abnormal_ai_mailbox_not_analyzed
+  created: 1767837892290
+  size: 1246
+  numEvents: 2

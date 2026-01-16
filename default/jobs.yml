@@ -1,0 +1,420 @@
+in_abnormal_ai_audit_logs:
+  type: collection
+  ttl: 4h
+  ignoreGroupJobsLimit: false
+  removeFields: []
+  resumeOnBoot: false
+  schedule:
+    cronSchedule: "*/5 * * * *"
+    maxConcurrentRuns: 1
+    skippable: true
+    run:
+      rescheduleDroppedTasks: true
+      maxTaskReschedule: 1
+      logLevel: info
+      jobTimeout: 60m
+      mode: run
+      timeRangeType: relative
+      timeWarning: {}
+      expression: "true"
+      minTaskSize: 1MB
+      maxTaskSize: 10MB
+      stateTracking:
+        stateUpdateExpression: "__timestampExtracted !== false && {latestTime:
+          (state.latestTime || 0) > _time ? state.latestTime : _time}"
+        stateMergeExpression: "(prevState.latestTime || 0) > newState.latestTime ?
+          prevState : newState"
+        enabled: true
+    enabled: false
+  streamtags: []
+  workerAffinity: false
+  collector:
+    conf:
+      discovery:
+        discoverType: none
+      collectMethod: get
+      pagination:
+        type: request_page
+        pageField: pageNumber
+        sizeField: pageSize
+        size: 50
+        maxPages: 0
+        zeroIndexed: false
+        page: 1
+      authentication: none
+      timeout: 0
+      useRoundRobinDns: false
+      disableTimeFilter: false
+      decodeUrl: false
+      rejectUnauthorized: true
+      captureHeaders: false
+      stopOnEmptyResults: true
+      safeHeaders: []
+      retryRules:
+        type: backoff
+        interval: 1000
+        limit: 5
+        multiplier: 2
+        maxIntervalMs: 20000
+        codes:
+          - 429
+          - 503
+        enableHeader: true
+        retryConnectTimeout: false
+        retryConnectReset: false
+        retryHeaderName: retry-after
+      __scheduling:
+        stateTracking: {}
+      collectUrl: "`${C.vars['abnormal_base_url']}/auditlogs`"
+      collectRequestHeaders:
+        - name: Authorization
+          value: "'Bearer ' + `${C.vars['abnormal_api_token']}`"
+      collectRequestParams:
+        - name: filter
+          value: "`timestamp gte ` + `${new Date(state.latestTime*1000 || earliest*1000 ||
+            (Date.now() - (1000*3600*24*7))).toISOString()}`"
+    destructive: false
+    encoding: utf8
+    type: rest
+  input:
+    type: collection
+    staleChannelFlushMs: 10000
+    sendToRoutes: true
+    preprocess:
+      disabled: true
+    throttleRatePerSec: "0"
+    metadata:
+      - name: __packsource
+        value: "'cribl-abnormal-ai-rest-io.audit'"
+      - name: sourcetype
+        value: "'abnormal:ai:audit'"
+    breakerRulesets:
+      - Abnormal AI API Ruleset
+  savedState: {}
+  notifications: []
+in_abnormal_ai_threats:
+  type: collection
+  ttl: 4h
+  ignoreGroupJobsLimit: false
+  removeFields: []
+  resumeOnBoot: false
+  schedule:
+    cronSchedule: "*/5 * * * *"
+    maxConcurrentRuns: 1
+    skippable: true
+    run:
+      rescheduleDroppedTasks: true
+      maxTaskReschedule: 1
+      logLevel: info
+      jobTimeout: 60m
+      mode: run
+      timeRangeType: relative
+      timeWarning: {}
+      expression: "true"
+      minTaskSize: 1MB
+      maxTaskSize: 10MB
+      stateTracking:
+        stateUpdateExpression: "__timestampExtracted !== false && {latestTime:
+          (state.latestTime || 0) > _time ? state.latestTime : _time}"
+        stateMergeExpression: "(prevState.latestTime || 0) > newState.latestTime ?
+          prevState : newState"
+        enabled: true
+    enabled: false
+  streamtags: []
+  workerAffinity: false
+  collector:
+    conf:
+      discovery:
+        discoverType: http
+        discoverMethod: get
+        pagination:
+          type: request_page
+          pageField: pageNumber
+          sizeField: pageSize
+          size: 100
+          maxPages: 50
+          zeroIndexed: false
+          page: 1
+        enableStrictDiscoverParsing: false
+        enableDiscoverCode: false
+        itemList: []
+        discoverUrl: "`${C.vars['abnormal_base_url']}/threats`"
+        discoverRequestParams:
+          - name: filter
+            value: "`receivedTime gte ` + `${new Date(state.latestTime*1000 || earliest*1000
+              || (Date.now() - (1000*3600*24*7))).toISOString()}`"
+        discoverRequestHeaders:
+          - name: Authorization
+            value: "'Bearer ' + `${C.vars['abnormal_api_token']}`"
+        discoverDataField: threats
+        discoverResponseFormat: json
+      collectMethod: get
+      pagination:
+        type: none
+        pageField: pageNumber
+        sizeField: pageSize
+        size: 100
+        maxPages: 95
+        zeroIndexed: false
+        offsetField: offset
+        limitField: limit
+        limit: 50
+        page: 1
+      authentication: none
+      timeout: 0
+      useRoundRobinDns: false
+      disableTimeFilter: false
+      decodeUrl: false
+      rejectUnauthorized: true
+      captureHeaders: false
+      stopOnEmptyResults: true
+      safeHeaders: []
+      retryRules:
+        type: backoff
+        interval: 1000
+        limit: 5
+        multiplier: 2
+        maxIntervalMs: 20000
+        codes:
+          - 429
+          - 503
+        enableHeader: true
+        retryConnectTimeout: false
+        retryConnectReset: false
+        retryHeaderName: retry-after
+      __scheduling:
+        stateTracking: {}
+      collectUrl: "`${C.vars['abnormal_base_url']}/threats/${threatId}`"
+      collectRequestHeaders:
+        - name: Authorization
+          value: "'Bearer ' + `${C.vars['abnormal_api_token']}`"
+      collectRequestParams: []
+    destructive: false
+    encoding: utf8
+    type: rest
+  input:
+    type: collection
+    staleChannelFlushMs: 10000
+    sendToRoutes: true
+    preprocess:
+      disabled: true
+    throttleRatePerSec: "0"
+    metadata:
+      - name: __packsource
+        value: "'cribl-abnormal-ai-rest-io.threat'"
+      - name: sourcetype
+        value: "'abnormal:ai:threat'"
+    breakerRulesets:
+      - Abnormal AI API Ruleset
+  savedState: {}
+  notifications: []
+in_abnormal_ai_abuse_mailbox_not_analyzed:
+  type: collection
+  ttl: 4h
+  ignoreGroupJobsLimit: false
+  removeFields: []
+  resumeOnBoot: false
+  schedule:
+    cronSchedule: "*/5 * * * *"
+    maxConcurrentRuns: 1
+    skippable: true
+    run:
+      rescheduleDroppedTasks: true
+      maxTaskReschedule: 1
+      logLevel: info
+      jobTimeout: 60m
+      mode: run
+      timeRangeType: relative
+      timeWarning: {}
+      expression: "true"
+      minTaskSize: 1MB
+      maxTaskSize: 10MB
+      stateTracking:
+        stateUpdateExpression: "__timestampExtracted !== false && {latestTime:
+          (state.latestTime || 0) > _time ? state.latestTime : _time}"
+        stateMergeExpression: "(prevState.latestTime || 0) > newState.latestTime ?
+          prevState : newState"
+        enabled: true
+    enabled: false
+  streamtags: []
+  workerAffinity: false
+  collector:
+    conf:
+      discovery:
+        discoverType: none
+      collectMethod: get
+      pagination:
+        type: none
+        pageField: pageNumber
+        sizeField: pageSize
+        size: 50
+        maxPages: 0
+        zeroIndexed: false
+        page: 1
+      authentication: none
+      timeout: 0
+      useRoundRobinDns: false
+      disableTimeFilter: false
+      decodeUrl: false
+      rejectUnauthorized: true
+      captureHeaders: false
+      stopOnEmptyResults: true
+      safeHeaders: []
+      retryRules:
+        type: backoff
+        interval: 1000
+        limit: 5
+        multiplier: 2
+        maxIntervalMs: 20000
+        codes:
+          - 429
+          - 503
+        enableHeader: true
+        retryConnectTimeout: false
+        retryConnectReset: false
+        retryHeaderName: retry-after
+      __scheduling:
+        stateTracking: {}
+      collectUrl: "`${C.vars['abnormal_base_url']}/abuse_mailbox/not_analyzed`"
+      collectRequestHeaders:
+        - name: Authorization
+          value: "'Bearer ' + `${C.vars['abnormal_api_token']}`"
+      collectRequestParams:
+        - name: start
+          value: "`${new Date(state.latestTime*1000 || earliest*1000 || (Date.now() -
+            (1000*3600*24*7))).toISOString()}`"
+    destructive: false
+    encoding: utf8
+    type: rest
+  input:
+    type: collection
+    staleChannelFlushMs: 10000
+    sendToRoutes: true
+    preprocess:
+      disabled: true
+    throttleRatePerSec: "0"
+    metadata:
+      - name: __packsource
+        value: "'cribl-abnormal-ai-rest-io.abuse_not_analyzed'"
+      - name: sourcetype
+        value: "'abnormal:ai:abuse_not_analyzed'"
+    breakerRulesets:
+      - Abnormal AI API Ruleset
+  savedState: {}
+  notifications: []
+in_abnormal_ai_threats_abusecampaigns:
+  type: collection
+  ttl: 4h
+  ignoreGroupJobsLimit: false
+  removeFields: []
+  resumeOnBoot: false
+  schedule:
+    cronSchedule: "*/5 * * * *"
+    maxConcurrentRuns: 1
+    skippable: true
+    run:
+      rescheduleDroppedTasks: true
+      maxTaskReschedule: 1
+      logLevel: info
+      jobTimeout: 60m
+      mode: run
+      timeRangeType: relative
+      timeWarning: {}
+      expression: "true"
+      minTaskSize: 1MB
+      maxTaskSize: 10MB
+      stateTracking:
+        stateUpdateExpression: "__timestampExtracted !== false && {latestTime:
+          (state.latestTime || 0) > _time ? state.latestTime : _time}"
+        stateMergeExpression: "(prevState.latestTime || 0) > newState.latestTime ?
+          prevState : newState"
+        enabled: true
+    enabled: false
+  streamtags: []
+  workerAffinity: false
+  collector:
+    conf:
+      discovery:
+        discoverType: http
+        discoverMethod: get
+        pagination:
+          type: request_page
+          pageField: pageNumber
+          sizeField: pageSize
+          size: 100
+          maxPages: 50
+          zeroIndexed: false
+          page: 1
+        enableStrictDiscoverParsing: false
+        enableDiscoverCode: false
+        itemList: []
+        discoverUrl: "`${C.vars['abnormal_base_url']}/abusecampaigns`"
+        discoverRequestParams:
+          - name: filter
+            value: "`lastReportedTime gte ` + `${new Date(state.latestTime*1000 ||
+              earliest*1000 || (Date.now() - (1000*3600*24*7))).toISOString()}`"
+        discoverRequestHeaders:
+          - name: Authorization
+            value: "'Bearer ' + `${C.vars['abnormal_api_token']}`"
+        discoverResponseFormat: json
+        discoverDataField: campaigns
+      collectMethod: get
+      pagination:
+        type: none
+        pageField: pageNumber
+        sizeField: pageSize
+        size: 100
+        maxPages: 95
+        zeroIndexed: false
+        offsetField: offset
+        limitField: limit
+        limit: 50
+        page: 1
+      authentication: none
+      timeout: 0
+      useRoundRobinDns: false
+      disableTimeFilter: false
+      decodeUrl: false
+      rejectUnauthorized: true
+      captureHeaders: false
+      stopOnEmptyResults: true
+      safeHeaders: []
+      retryRules:
+        type: backoff
+        interval: 1000
+        limit: 5
+        multiplier: 2
+        maxIntervalMs: 20000
+        codes:
+          - 429
+          - 503
+        enableHeader: true
+        retryConnectTimeout: false
+        retryConnectReset: false
+        retryHeaderName: retry-after
+      __scheduling:
+        stateTracking: {}
+      collectUrl: "`${C.vars['abnormal_base_url']}/abusecampaigns/${campaignId}`"
+      collectRequestHeaders:
+        - name: Authorization
+          value: "'Bearer ' + `${C.vars['abnormal_api_token']}`"
+      collectRequestParams: []
+    destructive: false
+    encoding: utf8
+    type: rest
+  input:
+    type: collection
+    staleChannelFlushMs: 10000
+    sendToRoutes: true
+    preprocess:
+      disabled: true
+    throttleRatePerSec: "0"
+    metadata:
+      - name: __packsource
+        value: "'cribl-abnormal-ai-rest-io.abusecampaign'"
+      - name: sourcetype
+        value: "'abnormal:ai:abusecampaign'"
+    breakerRulesets:
+      - Abnormal AI API Ruleset
+  savedState: {}
+  notifications: []
