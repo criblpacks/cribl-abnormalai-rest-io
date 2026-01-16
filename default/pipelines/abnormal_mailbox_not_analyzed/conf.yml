@@ -1,0 +1,73 @@
+output: default
+streamtags: []
+groups:
+  VqssOm:
+    name: Splunk Output
+    description: Enable to format data for Splunk
+    disabled: true
+    index: 4
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Process Abnormal.ai Abuse Mailbox Not Analyzed data
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "Author: Cribl Packs Team"
+  - id: serde
+    filter: "true"
+    disabled: null
+    conf:
+      mode: extract
+      type: json
+      srcField: _raw
+      fieldFilterExpr: value !== '' && value !== null
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      keep: []
+      remove:
+        - _raw
+  - id: serialize
+    filter: "true"
+    disabled: true
+    conf:
+      type: json
+      dstField: _raw
+      fields:
+        - "!cribl_*"
+        - "!host"
+        - "!source"
+        - "!sourcetype"
+        - "!index"
+        - "!_*"
+        - "*"
+    groupId: VqssOm
+  - id: eval
+    filter: "true"
+    disabled: true
+    conf:
+      keep:
+        - _*
+        - cribl_*
+        - host
+        - source
+        - sourcetype
+        - index
+      remove:
+        - "*"
+        - _*
+      add:
+        - disabled: false
+          name: index
+          value: index || C.vars['abnormal_ai_default_splunk_index']
+        - disabled: false
+          name: sourcetype
+          value: "'abnormal:ai:abuse_not_analyzed'"
+    groupId: VqssOm
+description: ""

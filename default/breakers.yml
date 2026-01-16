@@ -1,0 +1,102 @@
+Abnormal AI API Ruleset:
+  lib: custom
+  minRawLength: 256
+  rules:
+    - condition: _raw.includes('auditLogs')
+      type: json_array
+      timestampAnchorRegex: /timestamp/
+      timestamp:
+        type: auto
+        length: 150
+      timestampTimezone: UTC
+      timestampEarliest: -420weeks
+      timestampLatest: +1week
+      maxEventBytes: 1024000
+      disabled: false
+      parserEnabled: false
+      shouldUseDataRaw: false
+      jsonExtractAll: false
+      eventBreakerRegex: /[\n\r]+(?!\s)/
+      name: audit
+    - condition: _raw.includes('vendorDomain')
+      type: json_array
+      timestampAnchorRegex: /lastModifiedTime/
+      timestamp:
+        type: auto
+        length: 150
+      timestampTimezone: UTC
+      timestampEarliest: -420weeks
+      timestampLatest: +1week
+      maxEventBytes: 1014000
+      disabled: false
+      parserEnabled: false
+      shouldUseDataRaw: false
+      jsonExtractAll: false
+      eventBreakerRegex: /[\n\r]+(?!\s)/
+      name: vendor_cases
+    - condition: _raw.includes('not_analyzed_reason')
+      type: json_array
+      timestampAnchorRegex: /reported_datetime/
+      timestamp:
+        type: auto
+        length: 150
+      timestampTimezone: UTC
+      timestampEarliest: -420weeks
+      timestampLatest: +1week
+      maxEventBytes: 1014000
+      disabled: false
+      parserEnabled: false
+      shouldUseDataRaw: false
+      jsonExtractAll: false
+      eventBreakerRegex: /[\n\r]+(?!\s)/
+      name: mailbox_not_analyzed
+    - condition: _raw.includes('campaignId')
+      type: json_array
+      timestampAnchorRegex: /lastReported/
+      timestamp:
+        type: auto
+        length: 150
+      timestampTimezone: UTC
+      timestampEarliest: -420weeks
+      timestampLatest: +1week
+      maxEventBytes: 1014000
+      disabled: false
+      parserEnabled: false
+      shouldUseDataRaw: false
+      jsonExtractAll: false
+      eventBreakerRegex: /[\n\r]+(?!\s)/
+      name: abusecampaigns
+    - condition: _raw.includes('caseId')
+      type: json_array
+      timestampAnchorRegex: /last_modified/
+      timestamp:
+        type: auto
+        length: 150
+      timestampTimezone: UTC
+      timestampEarliest: -420weeks
+      timestampLatest: +1week
+      maxEventBytes: 1014000
+      disabled: false
+      parserEnabled: false
+      shouldUseDataRaw: false
+      jsonExtractAll: false
+      eventBreakerRegex: /[\n\r]+(?!\s)/
+      name: cases
+      parentFieldsToCopy: []
+    - condition: "true"
+      type: json_array
+      timestampAnchorRegex: /remediationTimestamp/
+      timestamp:
+        type: auto
+        length: 150
+      timestampTimezone: UTC
+      timestampEarliest: -420weeks
+      timestampLatest: +1week
+      maxEventBytes: 51200
+      disabled: false
+      parserEnabled: false
+      shouldUseDataRaw: false
+      jsonExtractAll: false
+      eventBreakerRegex: /[\n\r]+(?!\s)/
+      name: threats
+  description: Event breaking rules for data retrieved from the Abnormal.ai API

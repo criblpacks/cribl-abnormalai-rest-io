@@ -1,0 +1,59 @@
+id: default
+groups: {}
+comments: []
+routes:
+  - id: SgWtpd
+    name: cribl_abnormal_ai_audit_log
+    final: true
+    disabled: false
+    pipeline: abnormal_audit
+    description: ""
+    enableOutputExpression: false
+    outputExpression: null
+    filter: __packsource == 'cribl-abnormal-ai-rest-io.audit'
+    clones: []
+    output: default
+  - id: 2cE5NT
+    name: cribl_abnormal_ai_threats
+    final: true
+    disabled: false
+    pipeline: abnormal_threat
+    description: ""
+    enableOutputExpression: false
+    outputExpression: null
+    filter: __packsource == 'cribl-abnormal-ai-rest-io.threat'
+    clones: []
+    output: default
+  - id: wmOYk6
+    name: cribl_abnormal_ai_mailbox_not_analyzed
+    final: true
+    disabled: false
+    pipeline: abnormal_mailbox_not_analyzed
+    description: ""
+    enableOutputExpression: false
+    outputExpression: null
+    filter: __packsource == 'cribl-abnormal-ai-rest-io.abuse_not_analyzed'
+    clones: []
+    output: default
+  - id: MYxBNj
+    name: cribl_abnormal_ai_abude_campaign
+    final: true
+    disabled: false
+    pipeline: abnormal_abuse_campaigns
+    description: ""
+    enableOutputExpression: false
+    outputExpression: null
+    filter: __packsource == 'cribl-abnormal-ai-rest-io.abusecampaign'
+    clones: []
+    output: default
+  - id: default
+    name: default
+    final: true
+    disabled: false
+    pipeline: main
+    description: ""
+    enableOutputExpression: false
+    outputExpression: null
+    filter: "true"
+    clones: []
+    output: default
