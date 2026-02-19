@@ -7,7 +7,7 @@ abnormal_api_token:
   type: encryptedString
   lib: custom
   description: "REQUIRED: Your Abnormal.ai API token"
-  value: `YOUR_ABNORMAL_API_TOKEN`
+  value: 'YOUR_ABNORMAL_API_TOKEN'
 abnormal_ai_default_splunk_index:
   type: any
   lib: custom
