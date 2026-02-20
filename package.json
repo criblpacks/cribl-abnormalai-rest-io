@@ -1,1 +1,1 @@
-{"name":"cribl-abnormal-ai-rest-io","version":"1.0.0","minLogStreamVersion":"4.15.1","author":"Cribl Packs Team","description":"Collector Pack for processing Abnormal.ai data","displayName":"Abnormal.ai REST Collector IO","tags":{"streamtags":[]},"exports":[]}
+{"name":"cribl-abnormal-ai-rest-io","version":"1.0.1","minLogStreamVersion":"4.15.1","author":"Cribl Packs Team","description":"Collector Pack for processing Abnormal.ai data","displayName":"Abnormal.ai REST Collector IO","tags":{"streamtags":[]},"exports":[]}
