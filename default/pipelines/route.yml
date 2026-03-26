@@ -12,7 +12,8 @@ routes:
     outputExpression: null
     filter: __packsource == 'cribl-abnormal-ai-rest-io.audit'
     clones: []
-    output: default
+    targetContext: group
+    output: __group
   - id: 2cE5NT
     name: cribl_abnormal_ai_threats
     final: true
@@ -23,7 +24,8 @@ routes:
     outputExpression: null
     filter: __packsource == 'cribl-abnormal-ai-rest-io.threat'
     clones: []
-    output: default
+    targetContext: group
+    output: __group
   - id: wmOYk6
     name: cribl_abnormal_ai_mailbox_not_analyzed
     final: true
@@ -34,7 +36,8 @@ routes:
     outputExpression: null
     filter: __packsource == 'cribl-abnormal-ai-rest-io.abuse_not_analyzed'
     clones: []
-    output: default
+    targetContext: group
+    output: __group
   - id: MYxBNj
     name: cribl_abnormal_ai_abude_campaign
     final: true
@@ -45,7 +48,8 @@ routes:
     outputExpression: null
     filter: __packsource == 'cribl-abnormal-ai-rest-io.abusecampaign'
     clones: []
-    output: default
+    targetContext: group
+    output: __group
   - id: default
     name: default
     final: true
